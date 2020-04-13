@@ -4,8 +4,6 @@ const { CleanWebpackPlugin } = require('clean-webpack-plugin')
 const TerserWebpackPlugin = require('terser-webpack-plugin')
 
 
-console.log()
-
 module.exports = (env = {}) => {
   return {
     mode: env.production ? 'production' : 'development',
@@ -26,10 +24,14 @@ module.exports = (env = {}) => {
           }
         },
         {
-          test: /\.html/i,
+          test: /\.html$/i,
           use: [{
             loader: 'html-loader'
           }]
+        },
+        {
+          test: /\.css$/i,
+          use: ['style-loader', 'css-loader']
         }
       ]
     },

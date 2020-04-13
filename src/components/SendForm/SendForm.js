@@ -1,4 +1,6 @@
 import React, { Component } from 'react'
+import './SendForm.css'
+
 
 class SendForm extends Component {
 
@@ -20,11 +22,18 @@ class SendForm extends Component {
         <input
             type="text"
             name="message"
+            className="form-control"
             placeholder="Enter message"
             ref={ this.inputEl }
             autoComplete="off"
           />
-        <input type="submit" onClick={ this.handleSendMessage } />
+        <button 
+          type="submit" 
+          className="btn btn-success"
+          onClick={ this.handleSendMessage }
+        >
+          Send
+        </button>
       </form>
     )
   }
