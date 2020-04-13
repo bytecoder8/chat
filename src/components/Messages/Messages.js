@@ -3,18 +3,13 @@ import Message from './Message'
 
 
 class Messages extends Component {
-
-  messages = [
-    {id: 1, author: 'Author 1', message: 'Start'},
-    {id: 2, author: 'Author 2', message: 'Between'},
-    {id: 3, author: 'Author 1', message: 'End'}
-  ]
-
   render() {
+    const { messages } = this.props
+
     return (
       <div className="messages">
-        { this.messages.map(message => (
-          <Message key={message.id} {...message} />
+        { messages.map((message, index) => (
+          <Message key={index} {...message} />
         )) }
       </div>
     )
