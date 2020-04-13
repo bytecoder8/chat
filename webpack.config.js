@@ -41,6 +41,9 @@ module.exports = (env = {}) => {
       minimizer: [ new TerserWebpackPlugin() ]
     },
     devtool: 'cheap-eval-source-map',
+    devServer: {
+      port: process.env.PORT || 3000
+    },
     plugins: [
       new HtmlWebpackPlugin({
         template: './public/index.html',
