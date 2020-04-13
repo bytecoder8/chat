@@ -4,11 +4,13 @@ const server = new Websocket.Server({
   port: process.env.PORT || 8080,
 })
 
+log('server started')
+
 server.on('connection', (ws) => {
-  console.log('user connected')
+  log('user connected')
 
   ws.on('message', message => {
-    console.log('received message: ', message)
+    log('received message: ', message)
     try {
       const mObject = JSON.parse(message)
       ws.send(JSON.stringify({
@@ -16,7 +18,7 @@ server.on('connection', (ws) => {
         text: mObject.text
       }))
     } catch(error) {
-      console.log(error)
+      log(error)
     }
   })
 
@@ -27,5 +29,10 @@ server.on('connection', (ws) => {
 })
 
 server.on('close', () => {
-  console.log('user disconnected')
+  log('user disconnected')
 })
+
+
+function log(text) {
+  console.log(new Date() + ' ' + text)
+}

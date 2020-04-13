@@ -1,49 +1,22 @@
-import React, { useEffect, useState, useRef } from 'react'
+import React, { useEffect } from 'react'
+import { useSelector, useDispatch } from 'react-redux'
+import { connectToServer, sendMessage } from '../../redux/actions'
 import Messages from '../Messages'
 import SendForm from '../SendForm'
 
-const WS_URL = 'ws://localhost:8080'
-
-let socket
 
 const Chat = () => {
-  const [connected, setConnected] = useState(false)
-  const [messages, setMessages] = useState([])
-
+  const connected = useSelector(state => state.connected)
+  const messages = useSelector(state => state.messages)
+  const dispatch = useDispatch()
 
   useEffect(() => {
-    socket = new WebSocket(WS_URL)
-
-    socket.onopen = () => {
-      console.log('connection opened')
-      setConnected(true)
-    }
-
-    return () => {
-      socket.close()
-      setConnected(false)
-    }
+    dispatch(connectToServer())
   }, [])
 
-  useEffect(() => {
-    // message from server
-    socket.onmessage = ({ data }) => {
-      try {
-        const message = JSON.parse(data)
-        setMessages(messages => messages.concat(message))
-      } catch (error) {
-        console.error(error)
-      }
-    }
-  }, [messages])
 
   const handleSendMessage = text => {
-    if (socket) {
-      socket.send(JSON.stringify({ 
-        author: 'user',
-        text
-      }))
-    }
+    dispatch(sendMessage(text))
   }
 
   return(
