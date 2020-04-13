@@ -45,7 +45,21 @@ export const connectToServer = () => {
 
 export const sendMessage = (text) => {
   return (dispatch, getState) => {
-    const { socket } = getState() 
+    const { socket } = getState()
+
+    if (!socket || !(socket instanceof WebSocket)) {
+      dispatch(connectionError('Empty Socket'))
+      return
+    }
+
+    const status = socket.readyState
+    
+    // Reconnect
+    if (status === WebSocket.CLOSED || status === WebSocket.CLOSING) {
+      dispatch(connectToServer())
+      return
+    }
+
     socket.send(JSON.stringify({ 
       author: 'user',
       text

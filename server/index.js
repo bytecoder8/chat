@@ -32,7 +32,6 @@ server.on('close', () => {
   log('user disconnected')
 })
 
-
-function log(text) {
-  console.log(new Date() + ' ' + text)
+function log(...objs) {
+  console.log(new Date() + ' ' + objs.join(' '))
 }
