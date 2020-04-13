@@ -7,6 +7,7 @@ const server = new Websocket.Server({
 log('server started')
 
 const connections = []
+const usernames = []
 
 server.on('connection', ws => {
   log('user connected')
@@ -15,28 +16,61 @@ server.on('connection', ws => {
 
   ws.on('message', message => {
     log('received message: ', message)
+
+    let author
+
     try {
       const mObject = JSON.parse(message)
 
-      broadcast(connections, 
-        JSON.stringify({
-          author: mObject.author,
-          text: mObject.text
-        })
-      )
+      switch(mObject.type) {
+        case 'set_username':
+          let { username } = mObject
+          username = username.trim()
+          if (username) {
+            usernames.push({
+              connection: ws,
+              username
+            })
+            send(ws, {
+              type: 'set_username',
+              username
+            })
+            broadcast(connections, {
+              author: 'server',
+              text: `Welcome, ${username}`
+            })
+          } else {
+            send(ws, {
+              type: 'set_username',
+              error: 'Empty username'
+            })
+          }
+          break
+        case 'message':
+        default:
+          author = findUsername(ws)
+          if (author) {
+            broadcast(connections,
+              {
+                author,
+                text: mObject.text
+              }
+            )
+          } else {
+            console.error('Author not found')
+          }
+      }
     } catch(error) {
       log(error)
     }
   })
 
-  ws.send(JSON.stringify({
-    author: 'server',
-    text: 'Welcome, User!'
-  }))
 })
 
-server.on('close', () => {
+server.on('close', ws => {
   log('user disconnected')
+  connections = connections.filter( connection !== ws)
+  usernames = usernames.filter( username.connection !== ws )
 })
 
 function log(...objs) {
@@ -46,9 +80,18 @@ function log(...objs) {
 function broadcast(connections, message) {
   connections.forEach(ws => {
     try {
-      ws.send(message)
+      send(ws, message)
     } catch (error) {
       log('Error sending message')
     }
   })
+}
+
+function send(ws, obj) {
+  ws.send(JSON.stringify(obj))
+}
+
+function findUsername(ws) {
+  const obj = usernames.find(username => username.connection == ws)
+  return obj ? obj.username : undefined
 }

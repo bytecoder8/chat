@@ -1,4 +1,11 @@
-import { START, SUCCESS, FAILURE, CONNECT, REQUEST, MESSAGE_RECEIVED } from './types'
+import { 
+  SUCCESS, 
+  FAILURE, 
+  CONNECT, 
+  REQUEST, 
+  MESSAGE_RECEIVED, 
+  SET_USERNAME 
+} from './types'
 
 
 const initialState = {
@@ -7,6 +14,7 @@ const initialState = {
   connected: false,
   socket: null,
 
+  username: '',
   messages: []
 }
 
@@ -15,7 +23,8 @@ const chatReducer = (state = initialState, action) => {
     case CONNECT + REQUEST:
       return { 
         ...state, 
-        loading: true, 
+        loading: true,
+        username: '',
         error: '' 
       }
     case CONNECT + SUCCESS:
@@ -31,12 +40,35 @@ const chatReducer = (state = initialState, action) => {
         loading: false, 
         error: action.payload 
       }
+    case SET_USERNAME + REQUEST:
+      return {
+        ...state,
+        loading: true,
+        error: ''
+      }
     case MESSAGE_RECEIVED:
       try {
         const message = JSON.parse(action.payload)
-        return {
-          ...state,
-          messages: state.messages.concat(message)
+
+        if (message.type === 'set_username') {
+          if (message.error) {
+            return {
+              ...state,
+              loading: false,
+              error: action.payload
+            }
+          } else {
+            return {
+              ...state,
+              loading: false,
+              username: message.username
+            }
+          }
+        } else {
+          return {
+            ...state,
+            messages: state.messages.concat(message)
+          }
         }
       } catch (error) {
         console.log(error)

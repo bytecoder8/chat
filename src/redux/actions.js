@@ -47,16 +47,7 @@ export const sendMessage = (text) => {
   return (dispatch, getState) => {
     const { socket } = getState()
 
-    if (!socket || !(socket instanceof WebSocket)) {
-      dispatch(connectionError('Empty Socket'))
-      return
-    }
-
-    const status = socket.readyState
-    
-    // Reconnect
-    if (status === WebSocket.CLOSED || status === WebSocket.CLOSING) {
-      dispatch(connectToServer())
+    if (!checkSocket(socket, dispatch)) {
       return
     }
 
@@ -65,4 +56,38 @@ export const sendMessage = (text) => {
       text
     }))
   }
+}
+
+export const changeUsername = (username) => {
+  return (dispatch, getState) => {
+
+    const { socket } = getState()
+
+    if (!checkSocket(socket, dispatch)) {
+      return
+    }
+
+    socket.send(JSON.stringify({
+      type: 'set_username',
+      username
+    }))
+  }
+}
+
+
+const checkSocket = (socket, dispatch) => {
+  if (!socket || !(socket instanceof WebSocket)) {
+    dispatch(connectionError('Empty Socket'))
+    return false
+  }
+
+  const status = socket.readyState
+  
+  // Reconnect
+  if (status === WebSocket.CLOSED || status === WebSocket.CLOSING) {
+    dispatch(connectToServer())
+    return false
+  }
+
+  return true
 }
