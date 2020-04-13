@@ -6,17 +6,24 @@ const server = new Websocket.Server({
 
 log('server started')
 
-server.on('connection', (ws) => {
+const connections = []
+
+server.on('connection', ws => {
   log('user connected')
+
+  connections.push(ws)
 
   ws.on('message', message => {
     log('received message: ', message)
     try {
       const mObject = JSON.parse(message)
-      ws.send(JSON.stringify({
-        author: mObject.author,
-        text: mObject.text
-      }))
+
+      broadcast(connections, 
+        JSON.stringify({
+          author: mObject.author,
+          text: mObject.text
+        })
+      )
     } catch(error) {
       log(error)
     }
@@ -34,4 +41,14 @@ server.on('close', () => {
 
 function log(...objs) {
   console.log(new Date() + ' ' + objs.join(' '))
+}
+
+function broadcast(connections, message) {
+  connections.forEach(ws => {
+    try {
+      ws.send(message)
+    } catch (error) {
+      log('Error sending message')
+    }
+  })
 }
