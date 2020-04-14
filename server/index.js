@@ -101,5 +101,5 @@ function setUsername(ws, username) {
 }
 
 function send(ws, obj) {
-  ws.send(JSON.stringify(obj))
+  ws.send(JSON.stringify({ ...obj, time: new Date()}))
 }

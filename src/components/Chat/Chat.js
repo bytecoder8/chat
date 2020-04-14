@@ -4,6 +4,7 @@ import { connectToServer, sendMessage } from '../../redux/actions'
 import Messages from '../Messages'
 import SendForm from '../SendForm'
 import UsernameForm from '../UsernameForm/UsernameForm'
+import './Chat.css'
 
 
 const Chat = () => {

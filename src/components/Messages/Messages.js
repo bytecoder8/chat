@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import Message from './Message'
+import './Messages.css'
 
 
 class Messages extends Component {

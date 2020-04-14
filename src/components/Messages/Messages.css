@@ -1,0 +1,22 @@
+.messages__message {
+  margin-top: 0.5rem;
+}
+
+.message {
+  width: 20rem;
+  background-color: #073642;
+  border-radius: 5px;
+  padding: 1rem;
+}
+
+.message__meta {
+  display: flex;
+}
+
+.message__author {
+  font-weight: bold;
+}
+
+.message__time {
+  margin-left: 0.5rem;
+}

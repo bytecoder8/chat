@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { changeUsername } from '../../redux/actions'
+import './UsernameForm.css'
 
 
 class UsernameForm extends Component {
@@ -33,7 +34,7 @@ class UsernameForm extends Component {
         <input
           type="text"
           name="username"
-          className="form-control"
+          className="form-control username-form__input"
           placeholder="Enter your name"
           value={ username }
           autoComplete="off"
@@ -41,7 +42,7 @@ class UsernameForm extends Component {
         />
         <button 
           type="submit" 
-          className="btn btn-success"
+          className="btn btn--success username-form__button"
         >
           Set
         </button>

@@ -29,7 +29,7 @@ class SendForm extends Component {
           />
         <button 
           type="submit" 
-          className="btn btn-success"
+          className="btn btn--success"
           onClick={ this.handleSendMessage }
         >
           Send

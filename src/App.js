@@ -1,6 +1,5 @@
 import React from 'react'
 import Chat from './components/Chat'
-import './css/App.css'
 
 
 const App = () => {

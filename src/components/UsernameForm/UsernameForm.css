@@ -1,0 +1,7 @@
+.username-form {
+  display: flex;
+}
+
+.username-form__input {
+  max-width: 20rem;
+}

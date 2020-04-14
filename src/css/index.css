@@ -6,11 +6,6 @@ body {
   line-height: 1.5rem;
 }
 
-.container {
-  max-width: 1200px;
-  margin: 0 auto;
-}
-
 h1, h2, h3, h4, h5, h6 {
   margin-bottom: 0.5rem;
   font-weight: 500;
@@ -21,6 +16,11 @@ h1 {
   font-size: 2.5rem;
 }
 
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0.5rem;
+}
 
 .btn {
   display: inline-block;
@@ -40,7 +40,7 @@ h1 {
   transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
 }
 
-.btn-success {
+.btn--success {
   color: #fff;
   border-color: #2AA198;
   background: #2AA198 linear-gradient(180deg, #4aafa7, #2AA198) repeat-x;
