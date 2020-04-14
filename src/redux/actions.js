@@ -1,7 +1,7 @@
 import { SUCCESS, FAILURE, CONNECT, REQUEST, MESSAGE_RECEIVED } from './types'
 
 
-const WS_URL = 'ws://localhost:8080'
+const WS_URL = 'ws://nifty-wilson-014f8d.netlify.com:8080'
 
 export const connectionStarted = () => ({
   type: CONNECT + REQUEST
