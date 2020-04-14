@@ -6,13 +6,12 @@ const server = new Websocket.Server({
 
 log('server started')
 
-const connections = []
-const usernames = []
 
+const connections = new Map()
 server.on('connection', ws => {
   log('user connected')
 
-  connections.push(ws)
+  createConnection(ws)
 
   ws.on('message', message => {
     log('received message: ', message)
@@ -27,10 +26,7 @@ server.on('connection', ws => {
           let { username } = mObject
           username = username.trim()
           if (username) {
-            usernames.push({
-              connection: ws,
-              username
-            })
+            setUsername(ws, username)
             send(ws, {
               type: 'set_username',
               username
@@ -48,7 +44,7 @@ server.on('connection', ws => {
           break
         case 'message':
         default:
-          author = findUsername(ws)
+          author = connections.get(ws).username
           if (author) {
             broadcast(connections,
               {
@@ -78,7 +74,7 @@ function log(...objs) {
 }
 
 function broadcast(connections, message) {
-  connections.forEach(ws => {
+  connections.forEach( (value, ws) => {
     try {
       send(ws, message)
     } catch (error) {
@@ -87,11 +83,23 @@ function broadcast(connections, message) {
   })
 }
 
-function send(ws, obj) {
-  ws.send(JSON.stringify(obj))
+
+function createConnection(ws) {
+  connections.set(ws, {
+    username: ''
+  })
 }
 
-function findUsername(ws) {
-  const obj = usernames.find(username => username.connection == ws)
-  return obj ? obj.username : undefined
+function setUsername(ws, username) {
+  const connection = connections.get(ws)
+  if (connection) {
+    connections.set(ws, {
+      ...connection,
+      username
+    })
+  }
+}
+
+function send(ws, obj) {
+  ws.send(JSON.stringify(obj))
 }
