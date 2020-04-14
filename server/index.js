@@ -1,10 +1,13 @@
 const Websocket = require('ws')
 
+const port = process.env.PORT || 9090
+
 const server = new Websocket.Server({
-  port: process.env.PORT || 8080,
+  host: '0.0.0.0',
+  port,
 })
 
-log('server started')
+log('server started at ' + port)
 
 
 const connections = new Map()
