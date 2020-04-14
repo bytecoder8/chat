@@ -4,6 +4,21 @@ import './Messages.css'
 
 
 class Messages extends Component {
+
+  messagesEnd = React.createRef()
+
+  scrollToBottom = () => {
+    this.messagesEnd.current.scrollIntoView({ behavior: 'smooth' })
+  }
+
+  componentDidMount() {
+    this.scrollToBottom()
+  }
+
+  componentDidUpdate() {
+    this.scrollToBottom()
+  }
+
   render() {
     const { messages } = this.props
 
@@ -12,6 +27,7 @@ class Messages extends Component {
         { messages.map((message, index) => (
           <Message key={index} {...message} />
         )) }
+        <div ref={ this.messagesEnd }></div>
       </div>
     )
   }

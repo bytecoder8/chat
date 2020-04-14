@@ -1,4 +1,4 @@
-import { START, SUCCESS, FAILURE, CONNECT, REQUEST, MESSAGE_RECEIVED } from './types'
+import { SUCCESS, FAILURE, CONNECT, REQUEST, MESSAGE_RECEIVED } from './types'
 
 
 const WS_URL = 'ws://localhost:8080'
