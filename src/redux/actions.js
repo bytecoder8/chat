@@ -37,8 +37,7 @@ export const connectToServer = () => {
     }
 
     socket.onerror = error => {
-      console.log(error)
-      dispatch(connectionError(error))
+      dispatch(connectionError('Error connecting to chat server'))
     }
   }
 }

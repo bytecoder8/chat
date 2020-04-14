@@ -5,9 +5,9 @@ import './ErrorMessage.css'
 
 function ErrorMessage({ error }) {
   return (
-    <div className="alert alert-danger error-message">
-      <h4 className="alert-heading">Warning!</h4>
-      <p className="mb-0">{ error }. Try again later.</p>
+    <div className="error-message">
+      <h4 className="error-message__heading">Warning!</h4>
+      <p className="error-message__text">{ error }. Try again later.</p>
     </div>
   )
 }
