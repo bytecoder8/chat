@@ -3,8 +3,10 @@ import {
   FAILURE, 
   CONNECT, 
   REQUEST, 
-  MESSAGE_RECEIVED, 
-  SET_USERNAME 
+  DATA_RECEIVED, 
+  SET_USERNAME, 
+  FETCH_USERS,
+  DISCONNECT
 } from './types'
 
 
@@ -15,7 +17,12 @@ const initialState = {
   socket: null,
 
   username: '',
-  messages: []
+  messages: [],
+  users: {
+    loading: false,
+    error: '',
+    users: []
+  }
 }
 
 const chatReducer = (state = initialState, action) => {
@@ -40,18 +47,33 @@ const chatReducer = (state = initialState, action) => {
         loading: false, 
         error: action.payload 
       }
+    case DISCONNECT:
+      return {
+        ...state,
+        loading: false,
+        connected: false
+      }
     case SET_USERNAME + REQUEST:
       return {
         ...state,
         loading: true,
         error: ''
       }
-    case MESSAGE_RECEIVED:
+    case FETCH_USERS + REQUEST:
+      return {
+        ...state,
+        users: {
+          loading: true,
+          error: '',
+          users: []
+        }
+      }
+    case DATA_RECEIVED:
       try {
-        const message = JSON.parse(action.payload)
+        const data = JSON.parse(action.payload)
 
-        if (message.type === 'set_username') {
-          if (message.error) {
+        if (data.type === 'set_username') {
+          if (data.error) {
             return {
               ...state,
               loading: false,
@@ -61,13 +83,22 @@ const chatReducer = (state = initialState, action) => {
             return {
               ...state,
               loading: false,
-              username: message.username
+              username: data.username
+            }
+          }
+        } else if (data.type === 'online_users') {
+          return {
+            ...state,
+            users: {
+              loading: false,
+              error: '',
+              users: data
             }
           }
         } else {
           return {
             ...state,
-            messages: state.messages.concat(message)
+            messages: state.messages.concat(data)
           }
         }
       } catch (error) {

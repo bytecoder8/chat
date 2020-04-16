@@ -1,0 +1,11 @@
+.user-list {
+  width: 20rem;
+
+  background-color: #073642;
+  border-radius: 5px;
+  padding: 1rem;
+}
+
+.user-list__header {
+  font-weight: bold;
+}

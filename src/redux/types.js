@@ -4,5 +4,9 @@ export const FAILURE = 'FAILURE'
 
 
 export const CONNECT = 'CONNECT_'
+export const DISCONNECT = 'DISCONNECT'
+
 export const SET_USERNAME = 'SET_USERNAME_'
-export const MESSAGE_RECEIVED = 'MESSAGE_RECEIVED'
+export const DATA_RECEIVED = 'DATA_RECEIVED'
+
+export const FETCH_USERS = 'FETCH_USERS_'

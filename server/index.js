@@ -9,8 +9,8 @@ const server = new Websocket.Server({
 
 log('server started at ' + port)
 
-
 const connections = new Map()
+
 server.on('connection', ws => {
   log('user connected')
 
@@ -44,6 +44,15 @@ server.on('connection', ws => {
               error: 'Empty username'
             })
           }
+          break
+        case 'online_users':
+          send(ws, {
+            type: 'online_users',
+            users: getOnlineUsers(),
+          })
+          break
+        case 'disconnect':
+          removeConnection(ws)
           break
         case 'message':
         default:
@@ -101,6 +110,20 @@ function setUsername(ws, username) {
       username
     })
   }
+}
+
+function getOnlineUsers() {
+  const users = []
+  for (const user of connections.values()) {
+    if (user.username) {
+      users.push(user.username)
+    }
+  }
+  return users
+}
+
+function removeConnection(ws) {
+  connections.delete(ws)
 }
 
 function send(ws, obj) {

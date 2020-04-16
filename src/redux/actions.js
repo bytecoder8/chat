@@ -1,4 +1,12 @@
-import { SUCCESS, FAILURE, CONNECT, REQUEST, MESSAGE_RECEIVED } from './types'
+import { 
+  SUCCESS,
+  FAILURE,
+  CONNECT,
+  REQUEST,
+  DATA_RECEIVED,
+  FETCH_USERS,
+  DISCONNECT
+} from './types'
 
 
 const WS_URL = 'ws://localhost:9090'
@@ -17,10 +25,11 @@ export const connectionSuccess = socket => ({
   payload: socket
 })
 
-export const messageReceived = message => ({
-  type: MESSAGE_RECEIVED,
-  payload: message
+export const dataReceived = data => ({
+  type: DATA_RECEIVED,
+  payload: data
 })
+
 
 export const connectToServer = () => {
   return dispatch => {
@@ -32,13 +41,33 @@ export const connectToServer = () => {
       dispatch(connectionSuccess(socket))
 
       socket.onmessage = ({ data }) => {
-        dispatch(messageReceived(data))
+        dispatch(dataReceived(data))
       }
     }
 
     socket.onerror = error => {
       dispatch(connectionError('Error connecting to chat server'))
     }
+  }
+}
+
+export const disconnectFromServer = () => {
+  return (dispatch, getState) => {
+    const { socket } = getState()
+
+    if (socket.readyState === WebSocket.OPEN) {
+      socket.send(JSON.stringify({
+        type: 'disconnect'
+      }))
+    }
+
+    if (socket) {
+      socket.close()
+    }
+
+    dispatch({
+      type: DISCONNECT
+    })
   }
 }
 
@@ -89,4 +118,26 @@ const checkSocket = (socket, dispatch) => {
   }
 
   return true
+}
+
+
+// Users
+const usersRequested = () => ({
+  type: FETCH_USERS + REQUEST
+})
+
+export const getOnlineUsers = () => {
+  return (dispatch, getState) => {
+    const { socket } = getState()
+
+    if (!checkSocket(socket, dispatch)) {
+      return
+    }
+
+    dispatch(usersRequested())
+
+    socket.send(JSON.stringify({
+      type: 'online_users'
+    }))
+  }
 }
