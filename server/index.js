@@ -1,4 +1,5 @@
 const Websocket = require('ws')
+const ConnectionPool = require('./ConnectionPool')
 
 const port = process.env.PORT || 9090
 
@@ -9,12 +10,12 @@ const server = new Websocket.Server({
 
 log('server started at ' + port)
 
-const connections = new Map()
+const connections = new ConnectionPool()
 
 server.on('connection', ws => {
   log('user connected')
 
-  createConnection(ws)
+  connections.create(ws)
 
   ws.on('message', message => {
     log('received message: ', message)
@@ -29,7 +30,7 @@ server.on('connection', ws => {
           let { username } = mObject
           username = username.trim()
           if (username) {
-            setUsername(ws, username)
+            connections.setUsername(ws, username)
             send(ws, {
               type: 'set_username',
               username
@@ -48,15 +49,15 @@ server.on('connection', ws => {
         case 'online_users':
           send(ws, {
             type: 'online_users',
-            users: getOnlineUsers(),
+            users: connections.getOnlineUsers(),
           })
           break
         case 'disconnect':
-          removeConnection(ws)
+          connections.remove(ws)
           break
         case 'message':
         default:
-          author = connections.get(ws).username
+          author = connections.getUsername(ws)
           if (author) {
             broadcast(connections,
               {
@@ -77,55 +78,17 @@ server.on('connection', ws => {
 
 server.on('close', ws => {
   log('user disconnected')
-  connections = connections.filter( connection !== ws)
-  usernames = usernames.filter( username.connection !== ws )
+  connections.remove(ws)
 })
 
 function log(...objs) {
   console.log(new Date() + ' ' + objs.join(' '))
 }
 
-function broadcast(connections, message) {
-  connections.forEach( (value, ws) => {
-    try {
-      send(ws, message)
-    } catch (error) {
-      log('Error sending message')
-    }
-  })
-}
-
-
-function createConnection(ws) {
-  connections.set(ws, {
-    username: ''
-  })
-}
-
-function setUsername(ws, username) {
-  const connection = connections.get(ws)
-  if (connection) {
-    connections.set(ws, {
-      ...connection,
-      username
-    })
-  }
-}
-
-function getOnlineUsers() {
-  const users = []
-  for (const user of connections.values()) {
-    if (user.username) {
-      users.push(user.username)
-    }
-  }
-  return users
-}
-
-function removeConnection(ws) {
-  connections.delete(ws)
-}
-
 function send(ws, obj) {
   ws.send(JSON.stringify({ ...obj, time: new Date()}))
+}
+
+function broadcast(connections, message) {
+  connections.batch(send, message)
 }
